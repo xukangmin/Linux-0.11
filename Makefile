@@ -1,14 +1,5 @@
-OS = Mac
-
 # indicate the Hardware Image file
 HDA_IMG = hdc-0.11.img
-
-# indicate the path of the calltree
-CALLTREE=$(shell find tools/ -name "calltree" -perm 755 -type f)
-
-# indicate the path of the bochs
-#BOCHS=$(shell find tools/ -name "bochs" -perm 755 -type f)
-BOCHS=bochs
 
 #
 # if you want the ram-disk device, define this to be the
@@ -103,89 +94,35 @@ tmp.s:	boot/bootsect.s tools/system
 
 clean:
 	@rm -f Image System.map tmp_make core boot/bootsect boot/setup
-	@rm -f init/*.o tools/system boot/*.o typescript* info bochsout.txt
+	@rm -f init/*.o tools/system boot/*.o typescript* info bochsout.txt bx_enh_dbg.ini
 	@for i in mm fs kernel lib boot; do make clean -C $$i; done 
-info:
-	@make clean
-	@script -q -c "make all"
-	@cat typescript | col -bp | grep -E "warning|Error" > info
-	@cat info
 
-distclean: clean
-	@rm -f tag cscope* linux-0.11.* $(CALLTREE)
-	@(find tools/calltree-2.3 -name "*.o" | xargs -i rm -f {})
-	@make clean -C tools/calltree-2.3
-	@make clean -C tools/bochs/bochs-2.3.7
+run: Image
+	@$(QEMU) -drive format=raw,if=floppy,file=Image -drive format=raw,if=ide,file=$(HDA_IMG) -boot a
 
-backup: clean
-	@(cd .. ; tar cf - linux | compress16 - > backup.Z)
-	@sync
+debug: Image
+	@$(QEMU) -drive format=raw,if=floppy,file=Image -drive format=raw,if=ide,file=$(HDA_IMG) -boot a -s -S
 
-dep:
-	@sed '/\#\#\# Dependencies/q' < Makefile > tmp_make
-	@(for i in init/*.c;do echo -n "init/";$(CPP) -M $$i;done) >> tmp_make
-	@cp tmp_make Makefile
-	@for i in fs kernel mm; do make dep -C $$i; done
+gdb:
+	@gdb -x tools/gdb-cmd.txt tools/system
 
-tag: tags
-tags:
-	@ctags -R
-
-cscope:
-	@cscope -Rbkq
-
-start:
-	@qemu-system-x86_64 -m 16M -boot a -fda Image -hda $(HDA_IMG)
-
-debug:
-	@echo $(OS)
-	@qemu-system-x86_64 -m 16M -boot a -fda Image -hda $(HDA_IMG) -s -S
-
-bochs-debug:
-	@$(BOCHS) -q -f tools/bochs/bochsrc/bochsrc-hd-dbg.bxrc	
-
-bochs:
-ifeq ($(BOCHS),)
-	@(cd tools/bochs/bochs-2.3.7; \
-	./configure --enable-plugins --enable-disasm --enable-gdb-stub;\
-	make)
-endif
-
-bochs-clean:
-	@make clean -C tools/bochs/bochs-2.3.7
-
-calltree:
-ifeq ($(CALLTREE),)
-	@make -C tools/calltree-2.3
-endif
-
-calltree-clean:
-	@(find tools/calltree-2.3 -name "*.o" \
-	-o -name "calltree" -type f | xargs -i rm -f {})
-
-cg: callgraph
-callgraph:
-	@calltree -b -np -m init/main.c | tools/tree2dotx > linux-0.11.dot
-	@dot -Tjpg linux-0.11.dot -o linux-0.11.jpg
+bochs: Image
+	@$(BOCHS) -q -f tools/bochsrc.bxrc
 
 help:
 	@echo "<<<<This is the basic help info of linux-0.11>>>"
 	@echo ""
 	@echo "Usage:"
 	@echo "     make --generate a kernel floppy Image with a fs on hda1"
-	@echo "     make start -- start the kernel in qemu"
-	@echo "     make debug -- debug the kernel in qemu & gdb at port 1234"
-	@echo "     make disk  -- generate a kernel Image & copy it to floppy"
-	@echo "     make cscope -- genereate the cscope index databases"
-	@echo "     make tags -- generate the tag file"
-	@echo "     make cg -- generate callgraph of the system architecture"
+	@echo "     make run -- start the kernel in qemu"
+	@echo "     make debug -- debug the kernel in qemu & gdb at port 1234. run before `make gdb` or vscode debug"
+	@echo "     make gdb  -- start gdb ,connect to qemu and debug kernel. run `make debug` first"
+	@echo "     make bochs -- debug the kernel in bochs"
 	@echo "     make clean -- clean the object files"
-	@echo "     make distclean -- only keep the source code files"
 	@echo ""
 	@echo "Note!:"
 	@echo "     * You need to install the following basic tools:"
-	@echo "          ubuntu|debian, qemu|bochs, ctags, cscope, calltree, graphviz "
-	@echo "          vim-full, build-essential, hex, dd, gcc 4.3.2..."
+	@echo "          qemu, bochs, make, gcc, binutils, gdb"
 	@echo "     * Becarefull to change the compiling options, which will heavily"
 	@echo "     influence the compiling procedure and running result."
 	@echo ""
