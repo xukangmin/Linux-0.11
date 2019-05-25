@@ -1,0 +1,59 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build",
+            "command": "make",
+            "args": [],
+            "type": "shell",
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "clean",
+            "command": "make",
+            "args": [
+                "clean"
+            ],
+            "type": "shell"
+        },
+        {
+            "label": "debug",
+            "command": "make",
+            "args": [
+                "debug"
+            ],
+            "type": "shell",
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "label": "qemu",
+            "command": "make",
+            "args": [
+                "run"
+            ],
+            "type": "shell",
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "label": "bochs",
+            "command": "make",
+            "args": [
+                "bochs"
+            ],
+            "type": "shell",
+            "problemMatcher": [
+                "$gcc"
+            ]
+        }
+    ]
+}
