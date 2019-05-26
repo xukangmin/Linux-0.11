@@ -12,6 +12,7 @@
             "environment": [],
             "MIMode": "gdb",
             "miDebuggerPath": "gdb",
+            "targetArchitecture": "x86",
             "setupCommands": [
                 {
                     "description": "Enable pretty-printing for gdb",
@@ -23,7 +24,6 @@
                 }
             ],
            "miDebuggerServerAddress": "localhost:1234",
-           "preLaunchTask": "debug"
         }
     ]
 }

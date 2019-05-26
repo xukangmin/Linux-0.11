@@ -101,10 +101,10 @@ run: Image
 	@$(QEMU) -drive format=raw,if=floppy,file=Image -drive format=raw,if=ide,file=$(HDA_IMG) -boot a
 
 debug: Image
-	@$(QEMU) -drive format=raw,if=floppy,file=Image -drive format=raw,if=ide,file=$(HDA_IMG) -boot a -s -S
+	@$(QEMU) -drive format=raw,if=floppy,file=Image -drive format=raw,if=ide,file=$(HDA_IMG) -boot a -s -S&
 
 gdb:
-	@gdb -x tools/gdb-cmd.txt tools/system
+	@$(GDB) -x tools/gdb-cmd.txt tools/system
 
 bochs: Image
 	@$(BOCHS) -q -f tools/bochsrc.bxrc
