@@ -101,7 +101,7 @@ run: Image
 	@$(QEMU) -drive format=raw,if=floppy,file=Image -drive format=raw,if=ide,file=$(HDA_IMG) -boot a
 
 debug: Image
-	@$(QEMU) -drive format=raw,if=floppy,file=Image -drive format=raw,if=ide,file=$(HDA_IMG) -boot a -s -S
+	@$(QEMU) -drive format=raw,if=floppy,file=Image -drive format=raw,if=ide,file=$(HDA_IMG) -boot a -s -S&
 
 gdb:
 	@$(GDB) -x tools/gdb-cmd.txt tools/system

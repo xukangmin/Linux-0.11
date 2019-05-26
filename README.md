@@ -28,7 +28,7 @@ make run
 # debug in bochs
 make bochs
 # open debug server from qemu
-make debug&
+make debug
 # open gdb to connect with qemu
 make gdb
 ```
@@ -38,7 +38,7 @@ make gdb
 first run qemu in debug mode
 
 ```bash
-make debug&
+make debug
 ```
 
 Press F5 to launch vscode debug
