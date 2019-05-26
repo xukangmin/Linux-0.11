@@ -1,10 +1,10 @@
 UNAME := $(shell uname)
 
 # indicate the path of the bochs
-QEMU=qemu-system-i386.exe
+QEMU=qemu-system-i386
 
 # indicate the path of the bochs
-BOCHS=bochsdbg.exe
+BOCHS=bochs
 
 ifeq ($(UNAME), Linux)
 	AS	= as --32
