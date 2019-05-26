@@ -1,10 +1,10 @@
 UNAME := $(shell uname)
 
 # indicate the path of the bochs
-QEMU=qemu-system-i386.exe
+QEMU=qemu-system-i386
 
 # indicate the path of the bochs
-BOCHS=bochsdbg.exe
+BOCHS=bochs
 
 ifeq ($(UNAME), Linux)
 	AS	= as --32
@@ -18,6 +18,8 @@ ifeq ($(UNAME), Linux)
 	AR	= ar
 	STRIP = strip
 	OBJCOPY = objcopy
+
+	GDB = gdb
 	# we should use -fno-stack-protector with gcc 4.3
 	gcc_version=$(shell ls -l `which gcc` | tr '-' '\n' | tail -1)
 endif
@@ -36,6 +38,8 @@ ifeq ($(UNAME), Darwin)
 	AR	=i386-elf-ar
 	STRIP = i386-elf-strip
 	OBJCOPY = i386-elf-objcopy
+
+	GDB = i386-elf-gdb
 endif
 
 

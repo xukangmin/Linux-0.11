@@ -7,7 +7,7 @@ vga: update_freq=10
 keyboard: serial_delay=200, paste_delay=100000
 mouse: enabled=0
 
-display_library: win32, options="gui_debug"
+display_library: sdl2
 
 floppya: 1_44="Image", status=inserted
 ata0-master: type=disk, path="hdc-0.11.img", mode=flat, cylinders=200, heads=16, spt=38

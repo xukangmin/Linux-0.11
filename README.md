@@ -1,57 +1,44 @@
-Linux-0.11
-==========
+# Linux-0.11
 
 The old Linux kernel source ver 0.11 which has been tested under modern Linux,  Mac OSX and Windows.
 
-## 1. Build on Linux
+## Build on macOS
 
-### 1.1. Linux Setup
+### macOS Setup
 
-* a linux distribution: debian , ubuntu and mint are recommended
-* some tools: gcc gdb qemu
-* a linux-0.11 hardware image file: hdc-0.11.img, please download it from http://www.oldlinux.org, or http://mirror.lzu.edu.cn/os/oldlinux.org/, ant put it in the root directory.
-* Now, This version already support the Ubuntu 16.04, enjoy it.
-
-### 1.2. hack linux-0.11
-```bash
-$ make help		// get help
-$ make  		// compile
-$ make start		// boot it on qemu
-$ make debug		// debug it via qemu & gdb, you'd start gdb to connect it.
-```
-```gdb
-$ gdb tools/system
-(gdb) target remote :1234
-(gdb) b main
-(gdb) c
-```
-
-## 2. Build on Mac OS X
-
-### 2.1. Mac OS X Setup
-
-* install cross compiler gcc and binutils
-* install qemu
-* install gdb. you need download the gdb source and compile it to use gdb because port doesn't provide i386-elf-gdb, or you can use the pre-compiled gdb in the tools directory.
-* a linux-0.11 hardware image file: hdc-0.11.img
+* install Homebrew
+* install i386-elf cross compiler gcc and binutils
+* install qemu, bochs
+* install gdb
+* a linux-0.11 hardware image file: hdc-0.11.img (already in this repo)
 
 ```bash
-$ sudo port install qemu
-$ sudo port install i386-elf-binutils i386-elf-gcc
+brew install qemu bochs i386-elf-binutils i386-elf-gcc i386-elf-gdb
+# i386-elf-gdb have conflict file with i386-elf-binutils : /usr/local/share/info/bfd.info
+brew link --overwrite i386-elf-gdb
 ```
 
-optional
+### Build and run
+
 ```bash
-$ wget ftp://ftp.gnu.org/gnu/gdb/gdb-7.4.tar.bz2
-$ tar -xzvf gdb-7.4.tar.bz2
-$ cd gdb-7.4
-$ ./configure --target=i386-elf
-$ make
+# build
+make
+# run in qemu
+make run
+# debug in bochs
+make bochs
+# open debug server from qemu
+make debug&
+# open gdb to connect with qemu
+make gdb
 ```
 
-### 2.2. hack linux-0.11
-same as section 1.2
+### debug in vscode
 
+first run qemu in debug mode
 
-## 3. Build on Windows
-todo...
+```bash
+make debug&
+```
+
+Press F5 to launch vscode debug
