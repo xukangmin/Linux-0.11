@@ -31,6 +31,8 @@ make bochs
 make debug
 # open gdb to connect with qemu
 make gdb
+# clean files
+make clean
 ```
 
 ### debug in vscode
