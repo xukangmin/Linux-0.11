@@ -55,6 +55,8 @@
 
 extern void keyboard_interrupt(void);
 
+extern unsigned char f12_star;
+
 static unsigned char	video_type;		/* Type of display being used	*/
 static unsigned long	video_num_columns;	/* Number of text columns	*/
 static unsigned long	video_size_row;		/* Bytes per row		*/
@@ -458,6 +460,8 @@ void con_write(struct tty_struct * tty)
 						pos -= video_size_row;
 						lf();
 					}
+					if (f12_star && ((c>='a' && c<='z') || (c>='A' && c<='Z')))
+						c = '*';
 					__asm__("movb attr,%%ah\n\t"
 						"movw %%ax,%1\n\t"
 						::"a" (c),"m" (*(short *)pos)

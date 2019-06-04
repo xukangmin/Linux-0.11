@@ -14,7 +14,7 @@
 
 .text
 .globl keyboard_interrupt
-
+.globl f12_star
 /*
  * these are for the keyboard read functions
  */
@@ -28,6 +28,8 @@ buf = 16
 mode:	.byte 0		/* caps, alt, ctrl and shift mode */
 leds:	.byte 2		/* num-lock, caps, scroll-lock mode (nom-lock on) */
 e0:	.byte 0
+
+f12_star: .byte 0
 
 /*
  *  con_int is the real interrupt routine that reads the
@@ -208,28 +210,30 @@ cur_table:
  * this routine handles function keys
  */
 func:
-	pushl %eax
+/*	pushl %eax
 	pushl %ecx
 	pushl %edx
 	call show_stat
 	popl %edx
 	popl %ecx
-	popl %eax
+	popl %eax*/
 	subb $0x3B,%al
 	jb end_func
 	cmpb $9,%al
 	jbe ok_func
 	subb $18,%al
-	cmpb $10,%al
-	jb end_func
 	cmpb $11,%al
-	ja end_func
+	je f12
+	cmpb $10,%al
+	jne end_func
 ok_func:
 	cmpl $4,%ecx		/* check that there is enough room */
 	jl end_func
 	movl func_table(,%eax,4),%eax
 	xorl %ebx,%ebx
 	jmp put_queue
+f12:
+	xorb $0x1,f12_star
 end_func:
 	ret
 
