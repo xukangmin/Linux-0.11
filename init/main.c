@@ -26,6 +26,8 @@ static inline _syscall0(int,fork)
 static inline _syscall0(int,pause)
 static inline _syscall1(int,setup,void *,BIOS)
 static inline _syscall0(int,sync)
+_syscall2(int,mkdir,const char*,name,mode_t,mode)
+_syscall3(int,mknod,const char*,filename,mode_t,mode,dev_t,dev)
 
 #include <linux/tty.h>
 #include <linux/sched.h>
@@ -168,12 +170,22 @@ static char * envp_rc[] = { "HOME=/", NULL };
 static char * argv[] = { "-/bin/sh",NULL };
 static char * envp[] = { "HOME=/usr/root", NULL };
 
+void procfs_init()
+{
+	(void) open("/dev/tty0",O_RDWR,0);
+	(void) mkdir("/proc",0755);
+	(void) mknod("/proc/psinfo",S_IFPROC | 0444,0);
+	(void) mknod("/proc/meminfo",S_IFPROC | 0444,1);
+	(void) mknod("/proc/hdinfo",S_IFPROC | 0444,2);
+	(void) mknod("/proc/inodeinfo",S_IFPROC | 0444,3);
+}
+
 void init(void)
 {
 	int pid,i;
 
 	setup((void *) &drive_info);
-	(void) open("/dev/tty0",O_RDWR,0);
+	procfs_init();
 	(void) dup(0);
 	(void) dup(0);
 	printf("%d buffers = %d bytes buffer space\n\r",NR_BUFFERS,

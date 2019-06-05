@@ -429,3 +429,14 @@ void calc_mem(void)
 		}
 	}
 }
+
+int meminfo_read(char *buffer)
+{
+	unsigned long totalram=0,freeram=0;
+	int i;
+	for(i=0 ; i<PAGING_PAGES ; i++)
+		if (!mem_map[i]) freeram++;
+	freeram<<=12;
+	return sprintf(buffer, "total:%8d\tused:%8d\tfree:%8d\n",
+		HIGH_MEMORY, HIGH_MEMORY-freeram, freeram);
+}
