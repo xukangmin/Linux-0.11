@@ -33,6 +33,10 @@ int main()
         perror("shmdt error");
         return -1;
     }
+    if (shmctl(shmid,0,NULL)<0){
+        perror("shmctl error");
+        return -1;
+    }
     printf("consumer finished\n");
     return 0;
 }

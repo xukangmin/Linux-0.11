@@ -25,8 +25,7 @@ int sys_shmget(key_t key, size_t size, int shmflg)
 
 	if (size < 0 || size > PAGE_SIZE)
 		return -EINVAL;
-	// key = IPC_PRIVATE not support
-	if (key == 0)
+	if (key == IPC_PRIVATE)
 		return -ENOSYS;
 	for (id = 0; id <= max_shmid; id++)
 	{
@@ -84,7 +83,11 @@ void *sys_shmat(int shmid, const void *shmaddr, int shmflg)
 	shm_segs[shmid].nattch++;
 	return (void *)brk;
 }
-
+/**
+ * shmdt()会将shmaddr指定的页面从当前进程的虚拟地址空间中删除。
+ * 如果shmaddr对应的页表项不存在，则返回EINVAL。
+ * 传入不是由shmat附加的虚拟地址会产生异常行为。
+ */
 int sys_shmdt(const void *shmaddr)
 {
 	unsigned long vaddr,ds, *page_table;
@@ -97,5 +100,25 @@ int sys_shmdt(const void *shmaddr)
 		return EINVAL;
 	}
 	page_table[(vaddr>>12) & 0x3ff] = NULL;
+	return 0;
+}
+
+/**
+ * shmctl()会将shmid指定的共享页面释放。
+ * 如果shmid没有对应的页，则返回EINVAL。
+ * 使用前应当先使用shmdt分离虚拟地址。
+ * command仅支持IPC_RMID（0）
+ * buf被忽略
+ */
+int sys_shmctl(int shmid,int command,void *buf)
+{
+	if (command!=IPC_RMID)
+		return -ENOSYS;
+	if (shm_segs[shmid].nattch!=0)
+		return -EINVAL;
+	free_page(shm_segs[shmid].page);
+	shm_segs[shmid].key=0;
+	shm_segs[shmid].size=0;
+	shm_segs[shmid].page=0;
 	return 0;
 }

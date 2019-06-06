@@ -6,10 +6,12 @@
 
 typedef int key_t;
 
+#ifdef __NR_shmget
 _syscall3(int,shmget,key_t,key,unsigned int,size,int,shmflg)
 _syscall3(void *,shmat,int,shmid,const void *,shmaddr,int,shmflg)
 _syscall1(int,shmdt,const void *,shmaddr)
-
+_syscall3(int,shmctl,int,shmid,int,command,void* ,buf)
+#endif
 #ifndef IPC_CREAT
 #define IPC_CREAT  00001000
 #endif
