@@ -1,21 +1,21 @@
 #define __LIBRARY__
 #include <unistd.h>
-#define BITS 4
-#define SIZE (1 << BITS)
-#define MASK (SIZE - 1)
-
-typedef int key_t;
 
 #ifdef __NR_shmget
+typedef int key_t;
 _syscall3(int,shmget,key_t,key,unsigned int,size,int,shmflg)
 _syscall3(void *,shmat,int,shmid,const void *,shmaddr,int,shmflg)
 _syscall1(int,shmdt,const void *,shmaddr)
 _syscall3(int,shmctl,int,shmid,int,command,void* ,buf)
-#endif
-#ifndef IPC_CREAT
 #define IPC_CREAT  00001000
+#else
+#include <sys/ipc.h>
+#include <sys/shm.h>
 #endif
 
+#define BITS 4
+#define SIZE (1 << BITS)
+#define MASK (SIZE - 1)
 typedef struct share_memory_data
 {
     unsigned int in;

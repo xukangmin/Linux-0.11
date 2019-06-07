@@ -132,6 +132,7 @@
 #define __NR_shmget	72
 #define __NR_shmat	73
 #define __NR_shmdt	74
+#define __NR_shmctl	75
 
 #define _syscall0(type,name) \
   type name(void) \

@@ -14,7 +14,7 @@ int main()
         return -1;
     }
     printf("shm id=%d\n", shmid);
-    if ((shm = shmat(shmid, NULL, 0)) == (void *)-1)
+    if ((shm = (void *)shmat(shmid, NULL, 0)) == (void *)-1)
     {
         perror("shmat error");
         return -1;
