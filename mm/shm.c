@@ -81,8 +81,10 @@ void *sys_shmat(int shmid, const void *shmaddr, int shmflg)
 	printk("[sys_shmat] ds:addr : %X: %X, paddr: %X", ds, brk, shm_segs[shmid].page);
 	current->brk = brk + PAGE_SIZE;
 	shm_segs[shmid].nattch++;
+	current->shmid = shmid;
 	return (void *)brk;
 }
+
 /**
  * shmdt()会将shmaddr指定的页面从当前进程的虚拟地址空间中删除。
  * 如果shmaddr对应的页表项不存在，则返回EINVAL。
@@ -90,16 +92,17 @@ void *sys_shmat(int shmid, const void *shmaddr, int shmflg)
  */
 int sys_shmdt(const void *shmaddr)
 {
-	unsigned long vaddr,ds, *page_table;
+	unsigned long vaddr, ds, *page_table;
 	ds = get_base(current->ldt[2]);
-	vaddr = (unsigned long )shmaddr + ds;
-	page_table = (unsigned long *) ((vaddr>>20) & 0xffc);
-	if ((*page_table)&1)
-		page_table = (unsigned long *) (0xfffff000 & *page_table);
-	else {
+	vaddr = (unsigned long)shmaddr + ds;
+	page_table = (unsigned long *)((vaddr >> 20) & 0xffc);
+	if ((*page_table) & 1)
+		page_table = (unsigned long *)(0xfffff000 & *page_table);
+	else
 		return EINVAL;
-	}
-	page_table[(vaddr>>12) & 0x3ff] = NULL;
+	page_table[(vaddr >> 12) & 0x3ff] = NULL;
+	shm_segs[current->shmid].nattch--;
+	current->shmid = (key_t)-1;
 	return 0;
 }
 
@@ -110,15 +113,18 @@ int sys_shmdt(const void *shmaddr)
  * command仅支持IPC_RMID（0）
  * buf被忽略
  */
-int sys_shmctl(int shmid,int command,void *buf)
+int sys_shmctl(int shmid, int command, void *buf)
 {
-	if (command!=IPC_RMID)
-		return -ENOSYS;
-	if (shm_segs[shmid].nattch!=0)
+	if (shmid < 0 || shmid > max_shmid || shm_segs[shmid].key == 0 || shm_segs[shmid].nattch != 0)
 		return -EINVAL;
+	if (command != IPC_RMID)
+		return -ENOSYS;
 	free_page(shm_segs[shmid].page);
-	shm_segs[shmid].key=0;
-	shm_segs[shmid].size=0;
-	shm_segs[shmid].page=0;
+	shm_segs[shmid].key = 0;
+	shm_segs[shmid].size = 0;
+	shm_segs[shmid].page = 0;
+	shm_tot--;
+	while (max_shmid > 0 && shm_segs[max_shmid].key == 0)
+		max_shmid--;
 	return 0;
 }

@@ -10,6 +10,7 @@
 #include <linux/head.h>
 #include <linux/fs.h>
 #include <linux/mm.h>
+#include <linux/shm.h>
 #include <signal.h>
 
 #if (NR_OPEN > 32)
@@ -101,6 +102,7 @@ struct task_struct {
 	struct m_inode * root;
 	struct m_inode * executable;
 	unsigned long close_on_exec;
+	key_t shmid;
 	struct file * filp[NR_OPEN];
 /* ldt for this task 0 - zero 1 - cs 2 - ds&ss */
 	struct desc_struct ldt[3];
@@ -120,7 +122,7 @@ struct task_struct {
 /* uid etc */	0,0,0,0,0,0, \
 /* alarm */	0,0,0,0,0,0, \
 /* math */	0, \
-/* fs info */	-1,0022,NULL,NULL,NULL,0, \
+/* fs info */	-1,0022,NULL,NULL,NULL,0,0, \
 /* filp */	{NULL,}, \
 	{ \
 		{0,0}, \
