@@ -78,7 +78,7 @@ void *sys_shmat(int shmid, const void *shmaddr, int shmflg)
 	brk = current->brk;
 	if (put_page(shm_segs[shmid].page, ds + brk) == 0)
 		return -ENOMEM;
-	printk("[sys_shmat] ds:addr : %X: %X, paddr: %X", ds, brk, shm_segs[shmid].page);
+	printk("[sys_shmat] ds:addr : %X: %X, paddr: %X\n", ds, brk, shm_segs[shmid].page);
 	current->brk = brk + PAGE_SIZE;
 	shm_segs[shmid].nattch++;
 	current->shmid = shmid;
