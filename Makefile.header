@@ -5,7 +5,7 @@ else
 endif
 
 ifeq ($(detected_OS), Linux)
-	ifeq ($(origin WSLENV,enviroment)
+	ifdef WSL_DISTRO_NAME
 		detected_OS := WSL
 	endif
 endif
@@ -26,7 +26,7 @@ ifeq ($(detected_OS), Linux)
 	STRIP = strip
 	OBJCOPY = objcopy
 
-	GDB = GDB
+	GDB = gdb
 endif
 
 ifeq ($(detected_OS), WSL)

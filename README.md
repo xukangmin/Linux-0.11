@@ -14,9 +14,9 @@ The old Linux kernel source ver 0.11 which has been tested under modern Linux, m
 * Install VSCode and install **Remote Development** extension.
 * Install make, gcc, gdb and binutils in **wsl**
 * Install qemu, bochs in **windows**
-* Open new wsl window in vscode (see [docs for Remote-wsl](https://aka.ms/vscode-remote/wsl/getting-started)), install C/C++ extension on **wsl**
+* Open new **wsl window** in vscode (see [docs for Remote-wsl](https://aka.ms/vscode-remote/wsl/getting-started)), install C/C++ extension on **wsl**
 * Add all tools to `PATH`, so you can excute them directly from wsl shell.
-* Run all command in wsl shell.(eg. `make`)
+* Run all command in **wsl shell**.(eg. `make`)
 
 ### Access file in wsl
 
@@ -31,25 +31,25 @@ The old Linux kernel source ver 0.11 which has been tested under modern Linux, m
 
 This may not work.Use it only when you can't use WSL.
 
-* install `msys2`
-* install `make` in msys2 shell: `pacman -S make`
+* Install `msys2`
+* Install `make` in msys2 shell: `pacman -S make`
 * [download](https://github.com/lordmilko/i686-elf-tools/releases) prebuilt GNU `i686-elf` toolchain for Windows
-* install qemu, bochs
-* install VSCode
-* install VSCode C/C++ extension
+* Install qemu, bochs
+* Install VSCode
+* Install VSCode C/C++ extension
 * Add all tools to `PATH`, so you can excute them directly from msys2 shell.
-* modify VSCode C/C++ configuration in `.vscode`,set proper path for gcc and gdb.
+* Modify VSCode C/C++ configuration in `.vscode`,set proper path for gcc and gdb.
 * Run all command in msys2 shell.(eg. `make`)
 
 ## macOS Setup
 
-* install Xcode command line tools: `xcode-select --install`
-* install [Homebrew](https://brew.sh/)
-* install i386-elf cross compiler and toolchain: gcc, gdb and binutils
-* install qemu, bochs
-* install VSCode
-* install VSCode C/C++ extension
-* configure C/C++ extension
+* Install Xcode command line tools: `xcode-select --install`
+* Install [Homebrew](https://brew.sh/)
+* Install i386-elf cross compiler and toolchain: gcc, gdb and binutils
+* Install qemu, bochs
+* Install VSCode
+* Install VSCode C/C++ extension
+* Configure C/C++ extension
 
 ```bash
 brew install qemu bochs i386-elf-binutils i386-elf-gcc i386-elf-gdb
@@ -85,9 +85,15 @@ Apply this diff.
              "intelliSenseMode": "gcc-x64"
 ```
 
-### Limit in macOS
+### Mount minixfs in macOS
 
-* You can't mount minix image file in macOS. It doesn't support minix filesystem.
+**DON'T WORK NOW**.
+
+You need addition program to mount minix image
+
+* Install [osxfuse](https://osxfuse.github.io/)
+* Compile [minixfs](https://github.com/osxfuse/filesystems/tree/master/filesystems-c/unixfs/minixfs)
+* You can use `minixfs` to `mount` a minix filesystem. Unfortunately, it don't work `with hdc-0.11.img`.
 
 ## Build and run
 
@@ -112,7 +118,7 @@ make umount
 
 ### debug kernel in vscode
 
-first run qemu in debug mode
+First run qemu in debug mode
 
 ```bash
 make debug
