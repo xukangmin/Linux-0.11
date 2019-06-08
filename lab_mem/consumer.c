@@ -5,7 +5,7 @@ int main()
     int shmid;
     void *shm;
     shm_data *share;
-    int i;
+    int i = 0, val;
     if ((shmid = shmget((key_t)1603101, sizeof(shm_data), 0)) < 0)
     {
         perror("shmget error");
@@ -19,21 +19,21 @@ int main()
     }
     printf("shm address: %X\n", shm);
     share = (shm_data *)shm;
-    for (i = 0; i < 64; i++)
+    while (i < 64)
     {
-        int val;
-        if (pop(share, &val) < 0)
+        if (pop(share, &val) == 0)
         {
-            i--;
-        }else{
-            printf("\tconsumer: %d\n",val);
+            printf("\tconsumer: %d\n", val);
+            i++;
         }
     }
-    if (shmdt(shm)<0){
+    if (shmdt(shm) < 0)
+    {
         perror("shmdt error");
         return -1;
     }
-    if (shmctl(shmid,0,NULL)<0){
+    if (shmctl(shmid, 0, NULL) < 0)
+    {
         perror("shmctl error");
         return -1;
     }
