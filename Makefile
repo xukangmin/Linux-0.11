@@ -92,22 +92,39 @@ tmp.s:	boot/bootsect.s tools/system
 		| cut -c25-31 | tr '\012' ' '; echo "+ 15 ) / 16") > tmp.s
 	@cat boot/bootsect.s >> tmp.s
 
-clean:
+.PHONY clean:
 	@rm -f Image System.map tmp_make core boot/bootsect boot/setup
 	@rm -f init/*.o tools/system boot/*.o typescript* info bochsout.txt bx_enh_dbg.ini
 	@for i in mm fs kernel lib boot; do make clean -C $$i; done 
 
 run: Image
+	@if [ -d "hdc/usr" ]; then \
+		sudo umount hdc; \
+	fi
 	@$(QEMU) -drive format=raw,if=floppy,file=Image -drive format=raw,if=ide,file=$(HDA_IMG) -boot a
 
 debug: Image
+	@if [ -d "hdc/usr" ]; then \
+		sudo umount hdc; \
+	fi
 	@$(QEMU) -drive format=raw,if=floppy,file=Image -drive format=raw,if=ide,file=$(HDA_IMG) -boot a -s -S&
 
 gdb:
 	@$(GDB) -x tools/gdb-cmd.txt tools/system
 
 bochs: Image
-	@$(BOCHS) -q -f tools/bochsrc.bxrc
+	@if [ -d "hdc/usr" ]; then \
+		sudo umount hdc; \
+	fi
+	@$(BOCHS) -q -f tools/$(BXRC)
+
+mount:
+	@if [ ! -d "hdc/usr" ]; then \
+		sudo mount -t minix -o loop,offset=512 $(HDA_IMG) hdc; \
+	fi
+
+umount:
+	@sudo umount hdc
 
 help:
 	@echo "<<<<This is the basic help info of linux-0.11>>>"
