@@ -1,26 +1,30 @@
 # Linux-0.11
 
-The old Linux kernel source ver 0.11 which has been tested under modern Linux,  macOS and Windows.
-
-`master` branch is config and instructions for Windows10. see Linux or macOS instructions in branch `linux` or `macos`
+The old Linux kernel source ver 0.11 which has been tested under modern Linux, macOS and Windows.
 
 ## Windows 10 Setup
 
+* Upgrade Windows 10 to version 1903(19H1) or latter.
 * Enable WSL ([Windows subsystem of Linux](https://docs.microsoft.com/windows/wsl)), download a Linux distro from Microsoft store or Github. install it.
-* Install VSCode **Insider** (use vscode insider until vscode stable May 2019 update release in June 2019),and install **Remote Development**.
+* Install VSCode and install **Remote Development** extension.
 * install make, gcc, gdb and binutils in **wsl**
 * install qemu, bochs in **windows**
-* a linux-0.11 hardware image file: hdc-0.11.img (already in this repo)
 * Open new wsl window in vscode (see [docs for Remote-wsl](https://aka.ms/vscode-remote/wsl/getting-started)), install C/C++ extension on **wsl**
 
-## Access file in wsl
+### Access file in wsl
 
-* You can access wsl's Linux files in Explorer(or any win32 app) at `\\wsl$\Ubuntu` (or you distro name) (need Windows 10 update 1903)
+* You can access wsl's Linux files in Explorer(or any win32 app) at `\\wsl$\Ubuntu` (or you distro name)
 * You can access Windows's files in wsl at `/mnt/c` (or other drive letter)
 
-### Build and run
+### Known issue
 
-Run all commands in wsl
+* You can't mount minix image file in wsl1. wait for release of wsl2 or use a real Linux.
+
+## modern Linux Setup
+
+* install gcc, gdb, binutils, qemu, bochs and VSCode
+
+## Build and run
 
 ```bash
 # build
@@ -35,9 +39,13 @@ make debug
 make gdb
 # clean files
 make clean
+# mount hdc-0.11.img to hdc (only on linux and WSL2)
+make mount
+# umount hdc
+make umount
 ```
 
-### debug in vscode
+### debug kernel in vscode
 
 first run qemu in debug mode
 
@@ -46,7 +54,3 @@ make debug
 ```
 
 Press F5 to launch vscode debug
-
-# Known issue
-
-* You can't mount minix image file in wsl1. wait for release of wsl2 or use a real Linux.
