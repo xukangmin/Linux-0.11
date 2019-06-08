@@ -2,14 +2,21 @@
 
 The old Linux kernel source ver 0.11 which has been tested under modern Linux, macOS and Windows.
 
+## modern Linux Setup
+
+* Install gcc, gdb, binutils, qemu, bochs and VSCode
+* Install VSCode C/C++ extension
+
 ## Windows 10 Setup
 
 * Upgrade Windows 10 to version 1903(19H1) or latter.
 * Enable WSL ([Windows subsystem of Linux](https://docs.microsoft.com/windows/wsl)), download a Linux distro from Microsoft store or Github. install it.
 * Install VSCode and install **Remote Development** extension.
-* install make, gcc, gdb and binutils in **wsl**
-* install qemu, bochs in **windows**
+* Install make, gcc, gdb and binutils in **wsl**
+* Install qemu, bochs in **windows**
 * Open new wsl window in vscode (see [docs for Remote-wsl](https://aka.ms/vscode-remote/wsl/getting-started)), install C/C++ extension on **wsl**
+* Add all tools to `PATH`, so you can excute them directly from wsl shell.
+* Run all command in wsl shell.(eg. `make`)
 
 ### Access file in wsl
 
@@ -19,6 +26,20 @@ The old Linux kernel source ver 0.11 which has been tested under modern Linux, m
 ### Known issue
 
 * You can't mount minix image file in wsl1. wait for release of wsl2 or use a real Linux.
+
+## Windows Setup (not recommend)
+
+This may not work.Use it only when you can't use WSL.
+
+* install `msys2`
+* install `make` in msys2 shell: `pacman -S make`
+* [download](https://github.com/lordmilko/i686-elf-tools/releases) prebuilt GNU `i686-elf` toolchain for Windows
+* install qemu, bochs
+* install VSCode
+* install VSCode C/C++ extension
+* Add all tools to `PATH`, so you can excute them directly from msys2 shell.
+* modify VSCode C/C++ configuration in `.vscode`,set proper path for gcc and gdb.
+* Run all command in msys2 shell.(eg. `make`)
 
 ## macOS Setup
 
@@ -35,6 +56,8 @@ brew install qemu bochs i386-elf-binutils i386-elf-gcc i386-elf-gdb
 # i386-elf-gdb have conflict file with i386-elf-binutils : /usr/local/share/info/bfd.info
 brew link --overwrite i386-elf-gdb
 ```
+
+Apply this diff.
 
 ```diff
 --- a/.vscode/launch.json
@@ -65,13 +88,6 @@ brew link --overwrite i386-elf-gdb
 ### Limit in macOS
 
 * You can't mount minix image file in macOS. It doesn't support minix filesystem.
-
-### setup vscode
-
-## modern Linux Setup
-
-* install gcc, gdb, binutils, qemu, bochs and VSCode
-* install VSCode C/C++ extension
 
 ## Build and run
 
