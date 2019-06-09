@@ -110,13 +110,13 @@ debug: Image
 	@$(QEMU) -drive format=raw,if=floppy,file=Image -drive format=raw,if=ide,file=$(HDA_IMG) -boot a -s -S&
 
 gdb:
-	@gdb -x tools/gdb-cmd.txt tools/system
+	@$(GDB) -x tools/gdb-cmd.txt tools/system
 
 bochs: Image
 	@if [ -d "hdc/usr" ]; then \
 		sudo umount hdc; \
 	fi
-	@$(BOCHS) -q -f tools/bochsrc.bxrc
+	@$(BOCHS) -q -f tools/$(BXRC)
 
 mount:
 	@if [ ! -d "hdc/usr" ]; then \
