@@ -11,7 +11,8 @@
             "cwd": "${workspaceFolder}",
             "environment": [],
             "MIMode": "gdb",
-            "miDebuggerPath": "i386-elf-gdb",
+            "miDebuggerPath": "gdb",
+            "targetArchitecture": "x86",
             "setupCommands": [
                 {
                     "description": "Enable pretty-printing for gdb",

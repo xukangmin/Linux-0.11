@@ -6,7 +6,7 @@
                 "${workspaceFolder}/**"
             ],
             "defines": [],
-            "compilerPath": "/usr/local/bin/i386-elf-gcc",
+            "compilerPath": "/usr/bin/gcc",
             "cStandard": "c89",
             "cppStandard": "c++98",
             "intelliSenseMode": "gcc-x64"

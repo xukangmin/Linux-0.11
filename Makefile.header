@@ -1,15 +1,22 @@
-UNAME := $(shell uname)
+ifeq ($(OS),Windows_NT)
+    detected_OS := Windows
+else
+    detected_OS := $(shell uname)
+endif
 
-# indicate the path of the bochs
-QEMU=qemu-system-i386
+ifeq ($(detected_OS), Linux)
+	ifdef WSL_DISTRO_NAME
+		detected_OS := WSL
+	endif
+endif
 
-# indicate the path of the bochs
-BOCHS=bochs
+ifeq ($(detected_OS), Linux)
+	BOCHS=bochs
+	BXRC=x.bxrc
+	QEMU=qemu-system-i386
 
-ifeq ($(UNAME), Linux)
 	AS	= as --32
 	LD	= ld
-	#LDFLAGS = -m elf_i386 -x 
 	LDFLAGS = -m elf_i386
 	CC	= gcc
 	CFLAGS  = -g -m32 -fno-builtin -fno-stack-protector -fomit-frame-pointer -fstrength-reduce -fgnu89-inline -Wall
@@ -20,16 +27,53 @@ ifeq ($(UNAME), Linux)
 	OBJCOPY = objcopy
 
 	GDB = gdb
-	# we should use -fno-stack-protector with gcc 4.3
-	gcc_version=$(shell ls -l `which gcc` | tr '-' '\n' | tail -1)
 endif
 
+ifeq ($(detected_OS), WSL)
+	BOCHS=bochsdbg.exe
+	BXRC=win32.bxrc
+	QEMU=qemu-system-i386.exe
 
+	AS	= as --32
+	LD	= ld
+	LDFLAGS = -m elf_i386
+	CC	= gcc
+	CFLAGS  = -g -m32 -fno-builtin -fno-stack-protector -fomit-frame-pointer -fstrength-reduce -fgnu89-inline -Wall
 
-ifeq ($(UNAME), Darwin)
+	CPP	= cpp -nostdinc
+	AR	= ar
+	STRIP = strip
+	OBJCOPY = objcopy
+
+	GDB = gdb
+endif
+
+ifeq ($(detected_OS), Windows)
+	BOCHS=bochsdbg
+	BXRC=win32.bxrc
+	QEMU=qemu-system-i386
+
+	AS	= i686-elf-as --32
+	LD	= i686-elf-ld
+	LDFLAGS = -m elf_i386
+	CC	= i686-elf-gcc
+	CFLAGS  = -gdwarf-2 -g3 -m32 -fno-builtin -fno-stack-protector -fomit-frame-pointer -fstrength-reduce #-Wall
+
+	CPP	= i686-elf-cpp -nostdinc
+	AR	=i686-elf-ar
+	STRIP = i686-elf-strip
+	OBJCOPY = i686-elf-objcopy
+
+	GDB = i686-elf-gdb
+endif
+
+ifeq ($(detected_OS), Darwin)
+	BOCHS=bochs
+	BXRC=sdl2.bxrc
+	QEMU=qemu-system-i386
+
 	AS	= i386-elf-as --32
 	LD	= i386-elf-ld
-	#LDFLAGS = -m elf_i386 -x 
 	LDFLAGS = -m elf_i386
 	CC	= i386-elf-gcc
 	CFLAGS  = -gdwarf-2 -g3 -m32 -fno-builtin -fno-stack-protector -fomit-frame-pointer -fstrength-reduce #-Wall
