@@ -172,7 +172,6 @@ static char * envp[] = { "HOME=/usr/root", NULL };
 
 void procfs_init()
 {
-	(void) open("/dev/tty0",O_RDWR,0);
 	(void) mkdir("/proc",0755);
 	(void) mknod("/proc/psinfo",S_IFPROC | 0444,0);
 	(void) mknod("/proc/meminfo",S_IFPROC | 0444,1);
@@ -186,6 +185,7 @@ void init(void)
 
 	setup((void *) &drive_info);
 	procfs_init();
+	(void) open("/dev/tty0",O_RDWR,0);
 	(void) dup(0);
 	(void) dup(0);
 	printf("%d buffers = %d bytes buffer space\n\r",NR_BUFFERS,
