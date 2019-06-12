@@ -74,10 +74,13 @@ void *sys_shmat(int shmid, const void *shmaddr, int shmflg)
 	p = &shm_segs[shmid].page;
 
 	if (!*p)
+	{
 		if (!(*p = get_free_page()))
 			return -ENOMEM;
+	}
+	else
+		add_count(*p);
 	
-	add_count(*p);
 	if (put_page(*p, ds + brk) == 0)
 	{
 		free_page(*p);
