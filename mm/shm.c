@@ -67,7 +67,7 @@ int sys_shmget(key_t key, size_t size, int shmflg)
 void *sys_shmat(int shmid, const void *shmaddr, int shmflg)
 {
 	unsigned long ds, brk, *p;
-	if (shmid < 0 || shmid > max_shmid || shm_segs[shmid].key == 0)
+	if (shmid < 0 || shmid > max_shmid || shm_segs[shmid].key == 0 || current->shmid != (key_t)-1)
 		return -EINVAL;
 	ds = get_base(current->ldt[2]);
 	brk = current->brk;
@@ -80,7 +80,7 @@ void *sys_shmat(int shmid, const void *shmaddr, int shmflg)
 	}
 	else
 		add_count(*p);
-	
+
 	if (put_page(*p, ds + brk) == 0)
 	{
 		free_page(*p);
