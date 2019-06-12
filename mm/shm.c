@@ -6,6 +6,9 @@
 #include <linux/shm.h>
 #include <errno.h>
 
+extern void add_count(unsigned long addr);
+extern char get_count(unsigned long addr);
+
 static int shm_tot = 0;   /* total number of shared memory pages */
 static int max_shmid = 0; /* every used id is <= max_shmid */
 static struct shmid_ds shm_segs[SHMMNI];
@@ -45,24 +48,16 @@ int sys_shmget(key_t key, size_t size, int shmflg)
 		if (shm_segs[id].key == 0)
 		{
 			printk("[sys_shmget] create id: %d\n", id);
-			goto found;
+			shm_tot++;
+			shm_segs[id].key = key;
+			shm_segs[id].size = size;
+			shm_segs[id].nattch = 0;
+			if (id > max_shmid)
+				max_shmid = id;
+			return id;
 		}
 	}
 	return -ENOSPC;
-
-found:
-	p = get_free_page();
-	if (!p)
-		return -ENOMEM;
-	printk("[sys_shmget] alloc page: %X\n", p);
-	shm_tot++;
-	shm_segs[id].key = key;
-	shm_segs[id].page = p;
-	shm_segs[id].size = size;
-	shm_segs[id].nattch = 0;
-	if (id > max_shmid)
-		max_shmid = id;
-	return id;
 }
 
 /**
@@ -71,14 +66,24 @@ found:
  */
 void *sys_shmat(int shmid, const void *shmaddr, int shmflg)
 {
-	unsigned long ds, brk;
+	unsigned long ds, brk, *p;
 	if (shmid < 0 || shmid > max_shmid || shm_segs[shmid].key == 0)
 		return -EINVAL;
 	ds = get_base(current->ldt[2]);
 	brk = current->brk;
-	if (put_page(shm_segs[shmid].page, ds + brk) == 0)
+	p = &shm_segs[shmid].page;
+
+	if (!*p)
+		if (!(*p = get_free_page()))
+			return -ENOMEM;
+	
+	add_count(*p);
+	if (put_page(*p, ds + brk) == 0)
+	{
+		free_page(*p);
 		return -ENOMEM;
-	printk("[sys_shmat] ds:addr : %X: %X, paddr: %X\n", ds, brk, shm_segs[shmid].page);
+	}
+	printk("[sys_shmat] ds:addr : %X: %X, paddr: %X, rc: %d\n", ds, brk, *p, get_count(*p));
 	current->brk = brk + PAGE_SIZE;
 	shm_segs[shmid].nattch++;
 	current->shmid = shmid;
