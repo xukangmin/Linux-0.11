@@ -31,6 +31,7 @@
 extern int sys_exit(int exit_code);
 extern int sys_close(int fd);
 
+extern void shm_exit (void);
 /*
  * MAX_ARG_PAGES defines the number of pages allocated for arguments
  * and envelope for the new program. 32 should suffice, this gives
@@ -324,6 +325,7 @@ restart_interp:
 	for (i=0 ; i<NR_OPEN ; i++)
 		if ((current->close_on_exec>>i)&1)
 			sys_close(i);
+	shm_exit();
 	current->close_on_exec = 0;
 	free_page_tables(get_base(current->ldt[1]),get_limit(0x0f));
 	free_page_tables(get_base(current->ldt[2]),get_limit(0x17));

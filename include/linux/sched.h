@@ -103,6 +103,7 @@ struct task_struct {
 	struct m_inode * executable;
 	unsigned long close_on_exec;
 	key_t shmid;
+	unsigned long shmaddr;
 	struct file * filp[NR_OPEN];
 /* ldt for this task 0 - zero 1 - cs 2 - ds&ss */
 	struct desc_struct ldt[3];
@@ -122,7 +123,7 @@ struct task_struct {
 /* uid etc */	0,0,0,0,0,0, \
 /* alarm */	0,0,0,0,0,0, \
 /* math */	0, \
-/* fs info */	-1,0022,NULL,NULL,NULL,0,0, \
+/* fs info */	-1,0022,NULL,NULL,NULL,0,-1,0, \
 /* filp */	{NULL,}, \
 	{ \
 		{0,0}, \

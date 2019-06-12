@@ -19,6 +19,7 @@
 #include <asm/system.h>
 
 extern void write_verify(unsigned long address);
+extern void shm_fork(struct task_struct *, struct task_struct *);
 
 long last_pid=0;
 
@@ -122,6 +123,7 @@ int copy_process(int nr,long ebp,long edi,long esi,long gs,long none,
 		free_page((long) p);
 		return -EAGAIN;
 	}
+	shm_fork(current, p);
 	for (i=0; i<NR_OPEN;i++)
 		if ((f=p->filp[i]))
 			f->f_count++;

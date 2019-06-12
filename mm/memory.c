@@ -98,24 +98,6 @@ void free_page(unsigned long addr)
 	panic("trying to free free page");
 }
 
-void add_count(unsigned long addr)
-{
-	if (addr < LOW_MEM) return;
-	if (addr >= HIGH_MEMORY)
-		panic("trying to add mem_map of nonexistent page");
-	addr -= LOW_MEM;
-	addr >>= 12;
-	mem_map[addr]++;
-}
-
-char get_count(unsigned long addr)
-{
-	if (addr < LOW_MEM || addr >= HIGH_MEMORY) return -1;
-	addr -= LOW_MEM;
-	addr >>= 12;
-	return mem_map[addr];
-}
-
 /*
  * This function frees a continuos block of page tables, as needed
  * by 'exit()'. As does copy_page_tables(), this handles only 4Mb blocks.

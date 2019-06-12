@@ -6,9 +6,6 @@
 #include <linux/shm.h>
 #include <errno.h>
 
-extern void add_count(unsigned long addr);
-extern char get_count(unsigned long addr);
-
 static int shm_tot = 0;   /* total number of shared memory pages */
 static int max_shmid = 0; /* every used id is <= max_shmid */
 static struct shmid_ds shm_segs[SHMMNI];
@@ -67,36 +64,32 @@ int sys_shmget(key_t key, size_t size, int shmflg)
 void *sys_shmat(int shmid, const void *shmaddr, int shmflg)
 {
 	unsigned long ds, brk, *p;
-	if (shmid < 0 || shmid > max_shmid || shm_segs[shmid].key == 0 || current->shmid != (key_t)-1)
+	if (shmid < 0 || shmid > max_shmid || shm_segs[shmid].key == 0 || current->shmid != (key_t)-1 || current->shmaddr)
 		return -EINVAL;
 	ds = get_base(current->ldt[2]);
 	brk = current->brk;
 	p = &shm_segs[shmid].page;
-
 	if (!*p)
 		if (!(*p = get_free_page()))
 			return -ENOMEM;
-	
-	add_count(*p);
 	if (put_page(*p, ds + brk) == 0)
-	{
-		free_page(*p);
 		return -ENOMEM;
-	}
-	printk("[sys_shmat] ds:addr : %X: %X, paddr: %X, rc: %d\n", ds, brk, *p, get_count(*p));
 	current->brk = brk + PAGE_SIZE;
 	shm_segs[shmid].nattch++;
 	current->shmid = shmid;
+	current->shmaddr = brk;
+	printk("[sys_shmat] ds:addr : %X: %X, paddr: %X, rc: %d\n", ds, brk, *p, shm_segs[shmid].nattch);
 	return (void *)brk;
 }
 
 /**
  * shmdt()会将shmaddr指定的页面从当前进程的虚拟地址空间中删除。
  * 如果shmaddr对应的页表项不存在，则返回EINVAL。
- * 传入不是由shmat附加的虚拟地址会产生异常行为。
  */
 int sys_shmdt(const void *shmaddr)
 {
+	if ((unsigned long)shmaddr != current->shmaddr)
+		return EINVAL;
 	unsigned long vaddr, ds, *page_table;
 	ds = get_base(current->ldt[2]);
 	vaddr = (unsigned long)shmaddr + ds;
@@ -107,12 +100,18 @@ int sys_shmdt(const void *shmaddr)
 		return EINVAL;
 	page_table[(vaddr >> 12) & 0x3ff] = NULL;
 	shm_segs[current->shmid].nattch--;
+	if (!shm_segs[current->shmid].nattch)
+	{
+		free_page(shm_segs[current->shmid].page);
+		shm_segs[current->shmid].page = 0;
+	}
 	current->shmid = (key_t)-1;
+	current->shmaddr = 0;
 	return 0;
 }
 
 /**
- * shmctl()会将shmid指定的共享页面释放。
+ * shmctl()会将shmid指定的描述符删除。
  * 如果shmid没有对应的页，则返回EINVAL。
  * 使用前应当先使用shmdt分离虚拟地址。
  * command仅支持IPC_RMID（0）
@@ -124,12 +123,31 @@ int sys_shmctl(int shmid, int command, void *buf)
 		return -EINVAL;
 	if (command != IPC_RMID)
 		return -ENOSYS;
-	free_page(shm_segs[shmid].page);
 	shm_segs[shmid].key = 0;
 	shm_segs[shmid].size = 0;
-	shm_segs[shmid].page = 0;
 	shm_tot--;
 	while (max_shmid > 0 && shm_segs[max_shmid].key == 0)
 		max_shmid--;
 	return 0;
+}
+
+/* 
+ * detach attached segments. 
+ */
+void shm_exit(void)
+{
+	if (current->shmid != (key_t)-1)
+		sys_shmdt((void *)current->shmaddr);
+	return;
+}
+
+void shm_fork(struct task_struct *p1, struct task_struct *p2)
+{
+	if (p1->shmid != (key_t)-1)
+	{
+		p2->shmid = p1->shmid;
+		p2->shmaddr = p1->shmaddr;
+		shm_segs[p1->shmid].nattch++;
+	}
+	return;
 }
