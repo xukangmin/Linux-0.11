@@ -24,7 +24,6 @@ int psinfo_read(char *buffer)
 {
     int len = 0;
     int i;
-    struct task_struct *p;
     len += sprintf(buffer, "pid\tstate\tfather\tcounter\tstart_time\n");
     for (i = 0; i < NR_TASKS; i++)
     {
