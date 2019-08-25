@@ -8,24 +8,26 @@ ifeq ($(detected_OS), Linux)
 	ifdef WSL_DISTRO_NAME
 		detected_OS := WSL
 	endif
+	OS_Name := $(shell uname -o)
+	ifeq ($(OS_Name), Android)
+		detected_OS := Android
+	endif
 endif
 
 ifeq ($(detected_OS), Linux)
 	BOCHS=bochs
 	BXRC=x.bxrc
 	QEMU=qemu-system-i386
-
 	AS	= as --32
 	LD	= ld
 	LDFLAGS = -m elf_i386
 	CC	= gcc
 	CFLAGS  = -g -m32 -fno-builtin -fno-stack-protector -fomit-frame-pointer -fstrength-reduce -fgnu89-inline -Wall
-
 	CPP	= cpp -nostdinc
 	AR	= ar
 	STRIP = strip
 	OBJCOPY = objcopy
-
+	NM = nm
 	GDB = gdb
 endif
 
@@ -33,18 +35,16 @@ ifeq ($(detected_OS), WSL)
 	BOCHS=bochsdbg.exe
 	BXRC=win32.bxrc
 	QEMU=qemu-system-i386.exe
-
 	AS	= as --32
 	LD	= ld
 	LDFLAGS = -m elf_i386
 	CC	= gcc
 	CFLAGS  = -g -m32 -fno-builtin -fno-stack-protector -fomit-frame-pointer -fstrength-reduce -fgnu89-inline -Wall
-
 	CPP	= cpp -nostdinc
 	AR	= ar
 	STRIP = strip
 	OBJCOPY = objcopy
-
+	NM = nm
 	GDB = gdb
 endif
 
@@ -52,18 +52,16 @@ ifeq ($(detected_OS), Windows)
 	BOCHS=bochsdbg
 	BXRC=win32.bxrc
 	QEMU=qemu-system-i386
-
 	AS	= i686-elf-as --32
 	LD	= i686-elf-ld
 	LDFLAGS = -m elf_i386
 	CC	= i686-elf-gcc
 	CFLAGS  = -gdwarf-2 -g3 -m32 -fno-builtin -fno-stack-protector -fomit-frame-pointer -fstrength-reduce #-Wall
-
 	CPP	= i686-elf-cpp -nostdinc
-	AR	=i686-elf-ar
+	AR	= i686-elf-ar
 	STRIP = i686-elf-strip
 	OBJCOPY = i686-elf-objcopy
-
+	NM = i686-elf-nm
 	GDB = i686-elf-gdb
 endif
 
@@ -71,19 +69,32 @@ ifeq ($(detected_OS), Darwin)
 	BOCHS=bochs
 	BXRC=sdl2.bxrc
 	QEMU=qemu-system-i386
-
 	AS	= i386-elf-as --32
 	LD	= i386-elf-ld
 	LDFLAGS = -m elf_i386
 	CC	= i386-elf-gcc
 	CFLAGS  = -gdwarf-2 -g3 -m32 -fno-builtin -fno-stack-protector -fomit-frame-pointer -fstrength-reduce #-Wall
-
 	CPP	= i386-elf-cpp -nostdinc
 	AR	=i386-elf-ar
 	STRIP = i386-elf-strip
 	OBJCOPY = i386-elf-objcopy
-
+	NM = i386-elf-nm
 	GDB = i386-elf-gdb
 endif
 
-
+ifeq ($(detected_OS), Android)
+	BOCHS=bochs
+	BXRC=x.bxrc
+	QEMU=qemu-system-i386
+	AS	= clang --target=i386-pc-none-elf -c
+	LD	= ld.lld
+	LDFLAGS = -m elf_i386
+	CC	= clang --target=i386-pc-none-elf
+	CFLAGS  = -gdwarf-2 -g3 -m32 -fno-builtin -fno-stack-protector -fomit-frame-pointer
+	CPP	= clang-cpp -nostdinc
+	AR = llvm-ar
+	STRIP = llvm-strip
+	OBJCOPY = llvm-objcopy
+	NM = llvm-nm
+	GDB = lldb
+endif
