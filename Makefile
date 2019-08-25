@@ -58,27 +58,27 @@ tools/system:	boot/head.o init/main.o \
 	$(MATH) \
 	$(LIBS) \
 	-o tools/system 
-	@nm tools/system | grep -v '\(compiled\)\|\(\.o$$\)\|\( [aU] \)\|\(\.\.ng$$\)\|\(LASH[RL]DI\)'| sort > System.map 
+	@$(NM) tools/system | grep -v '\(compiled\)\|\(\.o$$\)\|\( [aU] \)\|\(\.\.ng$$\)\|\(LASH[RL]DI\)'| sort > System.map 
 
-kernel/math/math.a:
+kernel/math/math.a:dummy
 	@make -C kernel/math
 
-kernel/blk_drv/blk_drv.a:
+kernel/blk_drv/blk_drv.a:dummy
 	@make -C kernel/blk_drv
 
-kernel/chr_drv/chr_drv.a:
+kernel/chr_drv/chr_drv.a:dummy
 	@make -C kernel/chr_drv
 
-kernel/kernel.o:
+kernel/kernel.o:dummy
 	@make -C kernel
 
-mm/mm.o:
+mm/mm.o:dummy
 	@make -C mm
 
-fs/fs.o:
+fs/fs.o:dummy
 	@make -C fs
 
-lib/lib.a:
+lib/lib.a:dummy
 	@make -C lib
 
 boot/setup: boot/setup.s
@@ -154,6 +154,8 @@ help:
 	@echo "     boot/setup.s with AT&T rewritting, porting to gcc 4.3.2 :-)"
 	@echo ""
 	@echo "<<<Be Happy To Play With It :-)>>>"
+
+dummy:
 
 ### Dependencies:
 init/main.o: init/main.c include/unistd.h include/sys/stat.h \

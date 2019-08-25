@@ -186,9 +186,9 @@ cur2:	cmpb $0x01,e0		/* e0 forces cursor movement */
 1:	ret
 
 cur:	movb cur_table(%eax),%al
-	cmpb $'9,%al
+	cmpb $'9',%al
 	ja ok_cur
-	movb $'~,%ah
+	movb $'~',%ah
 ok_cur:	shll $16,%eax
 	movw $0x5b1b,%ax
 	xorl %ebx,%ebx
@@ -251,11 +251,11 @@ key_map:
 	.ascii "asdfghjkl|{"
 	.byte 0,0
 	.ascii "'zxcvbnm,.-"
-	.byte 0,'*,0,32		/* 36-39 */
+	.byte 0,'*',0,32		/* 36-39 */
 	.fill 16,1,0		/* 3A-49 */
-	.byte '-,0,0,0,'+	/* 4A-4E */
+	.byte '-',0,0,0,'+'	/* 4A-4E */
 	.byte 0,0,0,0,0,0,0	/* 4F-55 */
-	.byte '<
+	.byte '<'
 	.fill 10,1,0
 
 shift_map:
@@ -267,11 +267,11 @@ shift_map:
 	.ascii "ASDFGHJKL\\["
 	.byte 0,0
 	.ascii "*ZXCVBNM;:_"
-	.byte 0,'*,0,32		/* 36-39 */
+	.byte 0,'*',0,32		/* 36-39 */
 	.fill 16,1,0		/* 3A-49 */
-	.byte '-,0,0,0,'+	/* 4A-4E */
+	.byte '-',0,0,0,'+'	/* 4A-4E */
 	.byte 0,0,0,0,0,0,0	/* 4F-55 */
-	.byte '>
+	.byte '>'
 	.fill 10,1,0
 
 alt_map:
@@ -279,7 +279,7 @@ alt_map:
 	.ascii "\0@\0$\0\0{[]}\\\0"
 	.byte 0,0
 	.byte 0,0,0,0,0,0,0,0,0,0,0
-	.byte '~,13,0
+	.byte '~',13,0
 	.byte 0,0,0,0,0,0,0,0,0,0,0
 	.byte 0,0
 	.byte 0,0,0,0,0,0,0,0,0,0,0
@@ -287,7 +287,7 @@ alt_map:
 	.fill 16,1,0		/* 3A-49 */
 	.byte 0,0,0,0,0		/* 4A-4E */
 	.byte 0,0,0,0,0,0,0	/* 4F-55 */
-	.byte '|
+	.byte '|'
 	.fill 10,1,0
 
 #elif defined(KBD_US)
@@ -299,13 +299,13 @@ key_map:
 	.ascii "qwertyuiop[]"
 	.byte 13,0
 	.ascii "asdfghjkl;'"
-	.byte '`,0
+	.byte '`',0
 	.ascii "\\zxcvbnm,./"
-	.byte 0,'*,0,32		/* 36-39 */
+	.byte 0,'*',0,32		/* 36-39 */
 	.fill 16,1,0		/* 3A-49 */
-	.byte '-,0,0,0,'+	/* 4A-4E */
+	.byte '-',0,0,0,'+'	/* 4A-4E */
 	.byte 0,0,0,0,0,0,0	/* 4F-55 */
-	.byte '<
+	.byte '<'
 	.fill 10,1,0
 
 
@@ -316,13 +316,13 @@ shift_map:
 	.ascii "QWERTYUIOP{}"
 	.byte 13,0
 	.ascii "ASDFGHJKL:\""
-	.byte '~,0
+	.byte '~',0
 	.ascii "|ZXCVBNM<>?"
-	.byte 0,'*,0,32		/* 36-39 */
+	.byte 0,'*',0,32		/* 36-39 */
 	.fill 16,1,0		/* 3A-49 */
-	.byte '-,0,0,0,'+	/* 4A-4E */
+	.byte '-',0,0,0,'+'	/* 4A-4E */
 	.byte 0,0,0,0,0,0,0	/* 4F-55 */
-	.byte '>
+	.byte '>'
 	.fill 10,1,0
 
 alt_map:
@@ -330,7 +330,7 @@ alt_map:
 	.ascii "\0@\0$\0\0{[]}\\\0"
 	.byte 0,0
 	.byte 0,0,0,0,0,0,0,0,0,0,0
-	.byte '~,13,0
+	.byte '~',13,0
 	.byte 0,0,0,0,0,0,0,0,0,0,0
 	.byte 0,0
 	.byte 0,0,0,0,0,0,0,0,0,0,0
@@ -338,7 +338,7 @@ alt_map:
 	.fill 16,1,0		/* 3A-49 */
 	.byte 0,0,0,0,0		/* 4A-4E */
 	.byte 0,0,0,0,0,0,0	/* 4F-55 */
-	.byte '|
+	.byte '|'
 	.fill 10,1,0
 
 #elif defined(KBD_GR)
@@ -350,13 +350,13 @@ key_map:
 	.ascii "qwertzuiop@+"
 	.byte 13,0
 	.ascii "asdfghjkl[]^"
-	.byte 0,'#
+	.byte 0,'#'
 	.ascii "yxcvbnm,.-"
-	.byte 0,'*,0,32		/* 36-39 */
+	.byte 0,'*',0,32		/* 36-39 */
 	.fill 16,1,0		/* 3A-49 */
-	.byte '-,0,0,0,'+	/* 4A-4E */
+	.byte '-',0,0,0,'+'	/* 4A-4E */
 	.byte 0,0,0,0,0,0,0	/* 4F-55 */
-	.byte '<
+	.byte '<'
 	.fill 10,1,0
 
 
@@ -367,21 +367,21 @@ shift_map:
 	.ascii "QWERTZUIOP\\*"
 	.byte 13,0
 	.ascii "ASDFGHJKL{}~"
-	.byte 0,''
+	.byte 0,'''
 	.ascii "YXCVBNM;:_"
-	.byte 0,'*,0,32		/* 36-39 */
+	.byte 0,'*',0,32		/* 36-39 */
 	.fill 16,1,0		/* 3A-49 */
-	.byte '-,0,0,0,'+	/* 4A-4E */
+	.byte '-',0,0,0,'+'	/* 4A-4E */
 	.byte 0,0,0,0,0,0,0	/* 4F-55 */
-	.byte '>
+	.byte '>'
 	.fill 10,1,0
 
 alt_map:
 	.byte 0,0
 	.ascii "\0@\0$\0\0{[]}\\\0"
 	.byte 0,0
-	.byte '@,0,0,0,0,0,0,0,0,0,0
-	.byte '~,13,0
+	.byte '@',0,0,0,0,0,0,0,0,0,0
+	.byte '~',13,0
 	.byte 0,0,0,0,0,0,0,0,0,0,0
 	.byte 0,0
 	.byte 0,0,0,0,0,0,0,0,0,0,0
@@ -389,7 +389,7 @@ alt_map:
 	.fill 16,1,0		/* 3A-49 */
 	.byte 0,0,0,0,0		/* 4A-4E */
 	.byte 0,0,0,0,0,0,0	/* 4F-55 */
-	.byte '|
+	.byte '|'
 	.fill 10,1,0
 
 
@@ -402,13 +402,13 @@ key_map:
 	.ascii "azertyuiop^$"
 	.byte 13,0
 	.ascii "qsdfghjklm|"
-	.byte '`,0,42		/* coin sup gauche, don't know, [*|mu] */
+	.byte '`',0,42		/* coin sup gauche, don't know, [*|mu] */
 	.ascii "wxcvbn,;:!"
-	.byte 0,'*,0,32		/* 36-39 */
+	.byte 0,'*',0,32		/* 36-39 */
 	.fill 16,1,0		/* 3A-49 */
-	.byte '-,0,0,0,'+	/* 4A-4E */
+	.byte '-',0,0,0,'+'	/* 4A-4E */
 	.byte 0,0,0,0,0,0,0	/* 4F-55 */
-	.byte '<
+	.byte '<'
 	.fill 10,1,0
 
 shift_map:
@@ -418,21 +418,21 @@ shift_map:
 	.ascii "AZERTYUIOP<>"
 	.byte 13,0
 	.ascii "QSDFGHJKLM%"
-	.byte '~,0,'#
+	.byte '~',0,'#'
 	.ascii "WXCVBN?./\\"
-	.byte 0,'*,0,32		/* 36-39 */
+	.byte 0,'*',0,32		/* 36-39 */
 	.fill 16,1,0		/* 3A-49 */
-	.byte '-,0,0,0,'+	/* 4A-4E */
+	.byte '-',0,0,0,'+'	/* 4A-4E */
 	.byte 0,0,0,0,0,0,0	/* 4F-55 */
-	.byte '>
+	.byte '>'
 	.fill 10,1,0
 
 alt_map:
 	.byte 0,0
 	.ascii "\0~#{[|`\\^@]}"
 	.byte 0,0
-	.byte '@,0,0,0,0,0,0,0,0,0,0
-	.byte '~,13,0
+	.byte '@',0,0,0,0,0,0,0,0,0,0
+	.byte '~',13,0
 	.byte 0,0,0,0,0,0,0,0,0,0,0
 	.byte 0,0
 	.byte 0,0,0,0,0,0,0,0,0,0,0
@@ -440,7 +440,7 @@ alt_map:
 	.fill 16,1,0		/* 3A-49 */
 	.byte 0,0,0,0,0		/* 4A-4E */
 	.byte 0,0,0,0,0,0,0	/* 4F-55 */
-	.byte '|
+	.byte '|'
 	.fill 10,1,0
 
 #else
@@ -463,9 +463,9 @@ do_self:
 	je none
 	testb $0x4c,mode		/* ctrl or caps */
 	je 2f
-	cmpb $'a,%al
+	cmpb $'a',%al
 	jb 2f
-	cmpb $'},%al
+	cmpb $'}',%al
 	ja 2f
 	subb $32,%al
 2:	testb $0x0c,mode		/* ctrl */
@@ -490,7 +490,7 @@ none:	ret
  */
 minus:	cmpb $1,e0
 	jne do_self
-	movl $'/,%eax
+	movl $'/',%eax
 	xorl %ebx,%ebx
 	jmp put_queue
 
