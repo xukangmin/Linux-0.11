@@ -112,6 +112,9 @@ debug: Image
 gdb:
 	@$(GDB) -x tools/gdb-cmd.txt tools/system
 
+lldb:
+	@lldb -s tools/lldb-cmd.txt tools/system
+
 bochs: Image
 	@if [ -d "hdc/usr" ]; then \
 		sudo umount hdc; \

@@ -96,5 +96,5 @@ ifeq ($(detected_OS), Android)
 	STRIP = llvm-strip
 	OBJCOPY = llvm-objcopy
 	NM = llvm-nm
-	GDB = lldb
+	GDB = gdb
 endif
