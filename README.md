@@ -1,6 +1,6 @@
 # Linux-0.11
 
-The old Linux kernel source ver 0.11 which has been tested under modern Linux, macOS and Windows.
+The old Linux kernel source ver 0.11 which has been tested under modern Linux, macOS, Windows and Android.
 
 ## modern Linux Setup
 
@@ -93,6 +93,48 @@ You need addition program to mount minix image
 * Compile [minixfs](https://github.com/osxfuse/filesystems/tree/master/filesystems-c/unixfs/minixfs)
 * You can use `minixfs` to `mount` a minix filesystem. Unfortunately, it don't work `with hdc-0.11.img`.
 
+## Android Setup
+
+You need install [Termux](https://wiki.termux.com/wiki/Main_Page) App.
+
+```bash
+# Install Clang and LLVM toolchain to compile kernel
+pkg install git clang llvm lldb
+```
+
+If you want to run Linux 0.11 on your Android device, see instructions at [Termux wiki](https://wiki.termux.com/wiki/Graphical_Environment) to set up graphical environment.
+
+```bash
+pkg install qemu-system-i386
+```
+
+Alternatively, you can install `qemu-system-i386-headless` to run in the terminal.
+
+A PR for `Bochs` is available in [termux/x11-packages new package: bochs #143](https://github.com/termux/x11-packages/pull/143)
+
+## setup for Clang and LLVM
+
+You can use Clang and LLVM to compile Linux 0.11 kernel.(Android users only have this option)
+
+Just replace variables in `Makefile.header` with
+
+```makefile
+AS = clang --target=i386-pc-none-elf -c
+LD = ld.lld
+LDFLAGS = -m elf_i386
+CC = clang --target=i386-pc-none-elf
+CFLAGS = -gdwarf-2 -g3 -m32 -fno-builtin -fno-stack-protector -fomit-frame-pointer
+CPP = clang-cpp -nostdinc
+AR = llvm-ar
+STRIP = llvm-strip
+OBJCOPY = llvm-objcopy
+NM = llvm-nm
+```
+
+macOS users should install `llvm` package from `brew`, as Apple Clang does not have some llvm tools(llvm-objcopy and llvm-ar).
+
+Windows perbuild LLVM package don't have some llvm tools.
+
 ## Build and run
 
 ```bash
@@ -104,8 +146,10 @@ make run
 make bochs
 # open debug server from qemu
 make debug
-# open gdb to connect with qemu
+# run gdb command and connect to qemu
 make gdb
+# run lldb command and connect to qemu
+make lldb
 # clean files
 make clean
 # mount hdc-0.11.img to hdc (only on linux and WSL2)
