@@ -6,7 +6,7 @@ endif
 
 ifeq ($(detected_OS), Linux)
 	WSL_CHECK := $(shell uname -a)
-	ifneq (,findstring(Microsoft,$(WSL_CHECK)))
+	ifeq (findstring(Microsoft,$(WSL_CHECK)),Microsoft)
 		detected_OS := WSL
 	endif
 	OS_Name := $(shell uname -o)
